@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { SlidersHorizontal, Grid3X3, LayoutList, ChevronDown } from 'lucide-react';
 import ProductCard from '@/components/product/ProductCard';
 import ProductFilters from '@/components/product/ProductFilters';
@@ -11,7 +10,9 @@ import { Product } from '@/types';
 import { useFilterStore } from '@/lib/store';
 
 export default function CatalogPage() {
-  const searchParams = useSearchParams();
+  const [categoryParam, setCategoryParam] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [occasionParam, setOccasionParam] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -19,9 +20,18 @@ export default function CatalogPage() {
   const [showFilters, setShowFilters] = useState(false);
   const { filters } = useFilterStore();
 
-  const categoryParam = searchParams.get('category');
-  const searchQuery = searchParams.get('search');
-  const occasionParam = searchParams.get('occasion');
+  useEffect(() => {
+    const readParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      setCategoryParam(params.get('category'));
+      setSearchQuery(params.get('search'));
+      setOccasionParam(params.get('occasion'));
+    };
+
+    readParams();
+    window.addEventListener('popstate', readParams);
+    return () => window.removeEventListener('popstate', readParams);
+  }, []);
 
   useEffect(() => {
     fetchProducts();

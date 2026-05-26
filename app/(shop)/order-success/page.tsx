@@ -2,18 +2,18 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/lib/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function OrderSuccessPage() {
-  const searchParams = useSearchParams();
-  const txnid = searchParams.get('txnid');
+  const [txnid, setTxnid] = useState<string | null>(null);
   const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setTxnid(params.get('txnid'));
     clearCart();
   }, [clearCart]);
 
