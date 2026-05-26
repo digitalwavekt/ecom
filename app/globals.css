@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 25 50% 10%;
+    --card: 40 30% 95%;
+    --card-foreground: 25 50% 10%;
+    --popover: 40 30% 98%;
+    --popover-foreground: 25 50% 10%;
+    --primary: 0 68% 33%;
+    --primary-foreground: 40 33% 97%;
+    --secondary: 30 35% 55%;
+    --secondary-foreground: 25 50% 10%;
+    --muted: 30 20% 90%;
+    --muted-foreground: 25 20% 40%;
+    --accent: 43 74% 46%;
+    --accent-foreground: 25 50% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 33% 97%;
+    --border: 30 25% 85%;
+    --input: 30 25% 85%;
+    --ring: 0 68% 33%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-royal-200;
+  }
+
+  body {
+    @apply bg-cream text-royal-900;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-royal-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-maroon-700 text-white font-medium rounded hover:bg-maroon-800 transition-colors inline-flex items-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 border-2 border-royal-800 text-royal-800 font-medium rounded hover:bg-royal-800 hover:text-white transition-colors inline-flex items-center gap-2;
+  }
+
+  .btn-gold {
+    @apply px-6 py-3 bg-gold-500 text-maroon-900 font-medium rounded hover:bg-gold-400 transition-colors inline-flex items-center gap-2;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Swiper custom styles */
+.swiper-pagination-bullet {
+  @apply bg-royal-400 opacity-50;
+}
+
+.swiper-pagination-bullet-active {
+  @apply bg-maroon-700 opacity-100;
+}
