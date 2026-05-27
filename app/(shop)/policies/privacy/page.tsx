@@ -35,7 +35,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-serif text-xl text-maroon-800 mb-3">4. Data Security</h2>
-            <p>We implement industry-standard security measures including SSL encryption, secure payment gateways, and regular security audits. Your data is stored on secure servers managed by Supabase, which maintains SOC 2 compliance.</p>
+            <p>We implement industry-standard security measures including SSL encryption, secure payment gateways, and regular security audits. Your data is stored on secure servers managed by MongoDB Atlas, which maintains high availability and strong security controls.</p>
           </section>
 
           <section>
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
             <p>We use trusted third-party services for:</p>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li><strong>Payments:</strong> PayU Payment Gateway</li>
-              <li><strong>Database:</strong> Supabase</li>
+              <li><strong>Database:</strong> MongoDB Atlas</li>
               <li><strong>Analytics:</strong> Google Analytics</li>
               <li><strong>Email:</strong> SendGrid/Resend</li>
             </ul>

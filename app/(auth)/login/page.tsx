@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { supabaseClient } from '@/lib/supabase';
+import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
@@ -13,18 +13,29 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
+  const { setUser } = useAuthStore();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
     });
 
-    if (error) {
-      toast.error(error.message);
-    } else if (data.user) {
+    const result = await response.json();
+
+    if (!response.ok) {
+      toast.error(result.error || 'Login failed');
+    } else {
+      setUser(result.user);
       toast.success('Welcome back!');
       router.push('/');
       router.refresh();

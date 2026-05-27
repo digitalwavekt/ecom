@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, User, Heart, ShoppingBag, Menu, X, LogOut } from 'lucide-react';
-import { useCartStore } from '@/lib/store';
-import { supabaseClient } from '@/lib/supabase';
-import { useAuthStore } from '@/lib/store';
+import { useCartStore, useAuthStore } from '@/lib/store';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,7 +13,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const cartItems = useCartStore((state) => state.items);
   const totalItems = useCartStore((state) => state.getTotalItems)();
-  const { user, setUser } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -23,34 +21,8 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session?.user) {
-        const { data: profile } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-        setUser(profile || { id: session.user.id, email: session.user.email! });
-      }
-    };
-    getUser();
-
-    const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => listener.subscription.unsubscribe();
-  }, [setUser]);
-
-  const handleLogout = async () => {
-    await supabaseClient.auth.signOut();
-    setUser(null);
+  const handleLogout = () => {
+    logout();
   };
 
   const navLinks = [

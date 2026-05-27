@@ -1,11 +1,11 @@
 import { MongoClient, Db } from 'mongodb';
 import { Product, Order } from '@/types';
 
-const uri = process.env.MONGODB_URI as string;
+const uri = process.env.MONGODB_URI_DIRECT || (process.env.MONGODB_URI as string);
 const dbName = process.env.MONGODB_DB || 'trading-deals';
 
 if (!uri) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env');
+  throw new Error('Please define the MONGODB_URI or MONGODB_URI_DIRECT environment variable inside .env');
 }
 
 let cachedClient: MongoClient | null = null;
@@ -17,7 +17,21 @@ async function connectToDatabase() {
   }
 
   const client = new MongoClient(uri);
-  await client.connect();
+
+  try {
+    await client.connect();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (uri.startsWith('mongodb+srv://') && message.includes('querySrv')) {
+      throw new Error(
+        `MongoDB SRV lookup failed for ${uri.replace(/^mongodb\+srv:\/\//, '')}. ` +
+          'This usually means local DNS cannot resolve the SRV record. ' +
+          'Either fix DNS/SRV support for MongoDB Atlas or use a standard mongodb:// connection string via MONGODB_URI_DIRECT.'
+      );
+    }
+    throw error;
+  }
+
   const db = client.db(dbName);
 
   cachedClient = client;

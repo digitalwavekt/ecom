@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Phone } from 'lucide-react';
-import { supabaseClient } from '@/lib/supabase';
+import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
 
 export default function SignupPage() {
@@ -18,6 +18,8 @@ export default function SignupPage() {
     password: '',
     confirmPassword: '',
   });
+
+  const { setUser } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,31 +36,27 @@ export default function SignupPage() {
 
     setLoading(true);
 
-    const { data, error } = await supabaseClient.auth.signUp({
-      email: formData.email,
-      password: formData.password,
-      options: {
-        data: {
-          full_name: formData.fullName,
-          phone: formData.phone,
-        },
+    const response = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phone: formData.phone,
+      }),
     });
 
-    if (error) {
-      toast.error(error.message);
+    const result = await response.json();
+
+    if (!response.ok) {
+      toast.error(result.error || 'Unable to create account');
     } else {
-      // Create profile
-      if (data.user) {
-        await supabaseClient.from('profiles').insert({
-          id: data.user.id,
-          email: formData.email,
-          full_name: formData.fullName,
-          phone: formData.phone,
-        });
-      }
-      toast.success('Account created! Please check your email to verify.');
-      router.push('/login');
+      setUser(result.user);
+      toast.success('Account created! You are now signed in.');
+      router.push('/');
     }
 
     setLoading(false);
